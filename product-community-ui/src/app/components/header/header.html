@@ -1,0 +1,23 @@
+<header class="main-header">
+  <div class="header-container">
+    <div class="header-left">
+      <a routerLink="/home" class="logo">
+        <h1>Product Community</h1>
+      </a>
+    </div>
+    
+    <nav class="header-nav">
+      <a routerLink="/home" class="nav-link">Home</a>
+      <a routerLink="/search" class="nav-link">Search</a>
+      <a routerLink="/post-question" class="nav-link">Ask Question</a>
+      <a routerLink="/my-questions" class="nav-link">My Questions</a>
+    </nav>
+    
+    <div class="header-right">
+      <div class="user-menu" *ngIf="currentUser">
+        <span class="user-name">Welcome, {{ currentUser.name || currentUser.email }}</span>
+        <button (click)="logout()" class="logout-btn">Logout</button>
+      </div>
+    </div>
+  </div>
+</header>

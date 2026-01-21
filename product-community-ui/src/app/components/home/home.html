@@ -1,0 +1,59 @@
+<div class="home-container">
+  <app-header></app-header>
+  
+  <main class="home-main">
+    <div class="search-section">
+      <h1>Product Community</h1>
+      <p>Find answers to your product questions</p>
+      
+      <div class="search-box">
+        <input 
+          type="text" 
+          placeholder="Search for questions..."
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="performSearch()"
+          class="search-input"
+        >
+        <button (click)="performSearch()" class="search-btn">Search</button>
+      </div>
+    </div>
+    
+    <div class="quick-actions">
+      <h2>Quick Actions</h2>
+      <div class="action-cards">
+        <div class="action-card" (click)="goToSearch()">
+          <h3>🔍 Advanced Search</h3>
+          <p>Search with filters for tags, author, and date</p>
+        </div>
+        
+        <div class="action-card" (click)="goToPostQuestion()">
+          <h3>❓ Ask Question</h3>
+          <p>Post a new question to the community</p>
+        </div>
+        
+        <div class="action-card" (click)="goToMyQuestions()">
+          <h3>📋 My Questions</h3>
+          <p>View questions you have asked</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="recent-questions" *ngIf="recentQuestions.length > 0">
+      <h2>Recent Questions</h2>
+      <div class="question-list">
+        <div class="question-item" *ngFor="let question of recentQuestions" (click)="viewQuestion(question.id)">
+          <div class="question-content">
+            <h3>{{ question.questionText }}</h3>
+            <div class="question-meta">
+              <span class="tags">{{ question.tags }}</span>
+              <span class="author">Asked by {{ question.createdBy }}</span>
+              <span class="date">{{ question.createdDate | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <app-footer></app-footer>
+</div>

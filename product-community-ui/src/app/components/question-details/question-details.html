@@ -1,0 +1,114 @@
+<app-header></app-header>
+
+<div class="question-details-container">
+  <!-- DEBUG: isLoading={{ isLoading }}, question={{ question ? 'exists' : 'null' }}, question.id={{ question?.id }} -->
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading question...</p>
+  </div>
+
+  <div class="error-alert" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-secondary" (click)="goBack()">Go Back</button>
+  </div>
+
+  <div class="question-content" *ngIf="question && question.id">
+    <div class="question-header">
+      <button class="btn btn-secondary back-btn" (click)="goBack()">
+        ← Back to Questions
+      </button>
+      <div class="question-meta">
+        <span class="tags">
+          <span class="tag" *ngFor="let tag of (question.tags || '').split(',')">{{ tag.trim() }}</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="question-main">
+      <div class="question-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ comments.length }}</span>
+          <span class="stat-label">answers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ question.views || 0 }}</span>
+          <span class="stat-label">views</span>
+        </div>
+      </div>
+
+      <div class="question-body">
+        <h1 class="question-title">{{ question.questionText || 'No question text available' }}</h1>
+        
+        <div class="question-footer">
+          <div class="author-info">
+            <span class="author-name">{{ question.createdBy || 'Anonymous' }}</span>
+            <span class="asked-date">asked {{ formatDate(question.createdDate || '') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comments-section">
+      <h2>{{ comments.length }} Comments</h2>
+
+      <div class="add-comment" *ngIf="isLoggedIn()">
+        <h3>Your Answer</h3>
+        <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="comment-form">
+          <div class="form-group">
+            <textarea 
+              formControlName="commentText" 
+              placeholder="Write your answer here..."
+              rows="6"
+              [class.error]="commentForm.get('commentText')?.invalid && commentForm.get('commentText')?.touched"
+            ></textarea>
+            <div class="error-message" *ngIf="commentForm.get('commentText')?.invalid && commentForm.get('commentText')?.touched">
+              <span *ngIf="commentForm.get('commentText')?.errors?.['required']">Answer is required</span>
+              <span *ngIf="commentForm.get('commentText')?.errors?.['minlength']">Answer must be at least 10 characters</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" [disabled]="commentForm.invalid || isSubmittingComment" class="btn btn-primary">
+              <span *ngIf="!isSubmittingComment">Post Answer</span>
+              <span *ngIf="isSubmittingComment">Posting...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="login-prompt" *ngIf="!isLoggedIn()">
+        <div class="login-card">
+          <h3>Want to answer this question?</h3>
+          <p>Please <a routerLink="/login">login</a> or <a routerLink="/register">register</a> to post your answer.</p>
+        </div>
+      </div>
+
+      <div class="comments-list" *ngIf="comments.length > 0">
+        <div class="comment-item" *ngFor="let comment of comments">
+          <div class="comment-stats">
+            <div class="vote-buttons">
+              <button class="vote-btn upvote" (click)="likeComment(comment.id)">
+                ▲
+              </button>
+              <span class="vote-count">{{ comment.likes }}</span>
+              <button class="vote-btn downvote">▼</button>
+            </div>
+          </div>
+
+          <div class="comment-content">
+            <div class="comment-text">{{ comment.commentText }}</div>
+            <div class="comment-meta">
+              <span class="author">{{ comment.commentedBy }}</span>
+              <span class="date">answered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-comments" *ngIf="comments.length === 0 && !isLoggedIn()">
+        <p>No answers yet. Be the first to answer!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

@@ -1,0 +1,77 @@
+<app-header></app-header>
+
+<div class="my-questions-container">
+  <div class="my-questions-header">
+    <h1>My Questions</h1>
+    <p class="header-description">
+      Questions you have asked in community
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading your questions...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-alert" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-primary" (click)="loadMyQuestions()">Try Again</button>
+  </div>
+
+  <!-- Questions List -->
+  <div class="questions-content" *ngIf="!isLoading && !errorMessage">
+    <div class="questions-stats" *ngIf="myQuestions.length > 0">
+      <div class="stat-item">
+        <span class="stat-number">{{ myQuestions.length }}</span>
+        <span class="stat-label">Total Questions</span>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="myQuestions.length === 0">
+      <div class="empty-icon">📝</div>
+      <h2>No Questions Yet</h2>
+      <p>You haven't asked any questions yet. Start by asking your first question!</p>
+      <button class="btn btn-primary" (click)="navigateToPostQuestion()">
+        Ask Your First Question
+      </button>
+    </div>
+
+    <!-- Questions Grid -->
+    <div class="questions-grid" *ngIf="myQuestions.length > 0">
+      <div 
+        class="question-card" 
+        *ngFor="let question of myQuestions" 
+        (click)="viewQuestion(question.id)"
+      >
+        <div class="question-header">
+          <span class="question-date">{{ formatDate(question.createdDate) }}</span>
+        </div>
+
+        <div class="question-content">
+          <h3 class="question-title">{{ question.questionText }}</h3>
+          
+          <div class="question-tags">
+            <span class="tag" *ngFor="let tag of getTagsArray(question.tags)">
+              {{ tag }}
+            </span>
+          </div>
+        </div>
+
+        <div class="question-footer">
+          <div class="question-author">
+            <span class="author-label">Asked by</span>
+            <span class="author-name">{{ question.createdBy }}</span>
+          </div>
+          <div class="question-actions">
+            <span class="action-text">Click to view details →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

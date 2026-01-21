@@ -1,0 +1,94 @@
+<app-header></app-header>
+
+<div class="search-results-container">
+  <div class="search-header">
+    <h1>Search Results</h1>
+    <div class="search-summary">
+      <p *ngIf="!isLoading && !errorMessage">
+        Found <strong>{{ totalResults }}</strong> results for: {{ getSearchSummary() }}
+      </p>
+    </div>
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading search results...</p>
+  </div>
+
+  <div class="error-alert" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-secondary" (click)="performSearch()">Try Again</button>
+  </div>
+
+  <div class="results-section" *ngIf="!isLoading && !errorMessage">
+    <div class="results-count">
+      <span>{{ totalResults }} results</span>
+      <div class="sort-options">
+        <label for="sort">Sort by:</label>
+        <select id="sort" class="form-control" [value]="sortBy" (change)="onSortChange($event)">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="questions-list" *ngIf="searchResults.length > 0">
+      <div class="question-item" *ngFor="let question of searchResults" (click)="viewQuestion(question.id)">
+        <div class="question-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ question.commentsCount || 0 }}</span>
+            <span class="stat-label">answers</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ question.views || 0 }}</span>
+            <span class="stat-label">views</span>
+          </div>
+        </div>
+        
+        <div class="question-content">
+          <h3 class="question-title">{{ question.questionText }}</h3>
+          <div class="question-meta">
+            <span class="tags">
+              <span class="tag" *ngFor="let tag of question.tags.split(',')">{{ tag.trim() }}</span>
+            </span>
+          </div>
+          <div class="question-footer">
+            <div class="author-info">
+              <span class="author-name">{{ question.createdBy }}</span>
+              <span class="asked-date">asked {{ formatDate(question.createdDate) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-results" *ngIf="searchResults.length === 0 && !isLoading">
+      <div class="no-results-icon">🔍</div>
+      <h3>No questions found</h3>
+      <p>Try adjusting your search criteria or browse all questions.</p>
+      <button class="btn btn-primary" (click)="loadAllQuestions()">Browse All Questions</button>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="btn btn-secondary" 
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 0">
+        Previous
+      </button>
+      
+      <span class="page-info">
+        Page {{ currentPage + 1 }} of {{ totalPages }}
+      </span>
+      
+      <button 
+        class="btn btn-secondary" 
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages - 1">
+        Next
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

@@ -1,0 +1,85 @@
+<app-header></app-header>
+
+<div class="post-question-container">
+  <div class="post-question-form">
+    <div class="form-header">
+      <h1>Ask a Question</h1>
+      <p class="form-description">
+        Share your question with the community. Be clear and provide all the necessary details.
+      </p>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-alert" *ngIf="successMessage">
+      <p>{{ successMessage }}</p>
+      <p>Redirecting to search results...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-alert" *ngIf="errorMessage">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <!-- Question Form -->
+    <form [formGroup]="questionForm" (ngSubmit)="onSubmit()" class="question-form" *ngIf="!successMessage">
+      <div class="form-group">
+        <label for="questionText">Your Question *</label>
+        <textarea 
+          id="questionText"
+          formControlName="questionText" 
+          placeholder="What would you like to know? Be specific and include relevant details..."
+          rows="6"
+          [class.error]="questionText?.invalid && questionText?.touched"
+        ></textarea>
+        <div class="field-info">
+          <small>Minimum 20 characters</small>
+          <div class="error-message" *ngIf="questionText?.invalid && questionText?.touched">
+            <span *ngIf="questionText?.errors?.['required']">Question is required</span>
+            <span *ngIf="questionText?.errors?.['minlength']">Question must be at least 20 characters</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="tags">Tags *</label>
+        <input 
+          id="tags"
+          type="text" 
+          formControlName="tags" 
+          placeholder="e.g., spring-boot, java, authentication"
+          [class.error]="tags?.invalid && tags?.touched"
+        >
+        <div class="field-info">
+          <small>Separate multiple tags with commas</small>
+          <div class="error-message" *ngIf="tags?.invalid && tags?.touched">
+            <span *ngIf="tags?.errors?.['required']">Tags are required</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="goBack()">
+          Cancel
+        </button>
+        <button type="submit" [disabled]="questionForm.invalid || isLoading" class="btn btn-primary">
+          <span *ngIf="!isLoading">Post Question</span>
+          <span *ngIf="isLoading">Posting...</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Guidelines -->
+    <div class="guidelines" *ngIf="!successMessage">
+      <h3>Posting Guidelines</h3>
+      <ul>
+        <li>Be specific and provide context for your question</li>
+        <li>Include relevant error messages or screenshots if applicable</li>
+        <li>Use appropriate tags to help others find your question</li>
+        <li>Check if similar questions have already been asked</li>
+        <li>Be respectful and professional in your language</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
