@@ -475,12 +475,6 @@ curl -X GET "http://localhost:8080/api/questions/search?text=spring-boot&page=0&
 
 ---
 
-## 📞 **Support & Contact**
-
-### **API Base URL**
-- **Local**: `http://localhost:8080`
-- **Production**: `https://exit-test-api-production.up.railway.app`
-
 ### **Documentation Version**
 - **Version**: 1.0.0
 - **Last Updated**: February 8, 2026
