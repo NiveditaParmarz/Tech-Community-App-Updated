@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LoginRequest, RegisterRequest, User } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
@@ -29,27 +30,47 @@ export class AuthService {
     return !!this.currentUserValue;
   }
 
-  register(request: RegisterRequest): Observable<string> {
-    return this.http.post(`${this.apiUrl}/register`, request, { 
-      responseType: 'text' 
-    });
+  register(request: RegisterRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, request).pipe(
+      map(response => {
+        // Handle JWT token response
+        if (response && typeof response === 'object' && 'token' in response) {
+          const user: User = {
+            id: 0,
+            name: request.name,
+            email: request.email
+          };
+          
+          // Store user and token
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('authToken', (response as any).token);
+          }
+          this.currentUserSubject.next(user);
+        }
+        return response;
+      })
+    );
   }
 
-  login(request: LoginRequest): Observable<string> {
-    return this.http.post(`${this.apiUrl}/login`, request, { 
-      responseType: 'text' 
-    }).pipe(
+  login(request: LoginRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, request).pipe(
       map(response => {
-        // For now, we'll store the email as the user since the API doesn't return user details
-        const user: User = {
-          id: 0, // This would come from the API in a real implementation
-          name: request.email.split('@')[0], // Extract name from email for now
-          email: request.email
-        };
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('currentUser', JSON.stringify(user));
+        // Handle JWT token response
+        if (response && typeof response === 'object' && 'token' in response) {
+          const user: User = {
+            id: 0,
+            name: request.email.split('@')[0],
+            email: request.email
+          };
+          
+          // Store user and token
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('authToken', (response as any).token);
+          }
+          this.currentUserSubject.next(user);
         }
-        this.currentUserSubject.next(user);
         return response;
       })
     );
@@ -58,8 +79,16 @@ export class AuthService {
   logout(): void {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem('currentUser');
+      localStorage.removeItem('authToken');
     }
     this.currentUserSubject.next(null);
     this.router.navigate(['/']);
+  }
+
+  getAuthToken(): string | null {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('authToken');
+    }
+    return null;
   }
 }

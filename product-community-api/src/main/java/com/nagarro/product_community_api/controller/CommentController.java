@@ -29,7 +29,7 @@ public class CommentController {
         return commentService.add(comment);
     }
 
-    // ✅ LIKE COMMENT API
+
     @PostMapping("/{id}/like")
     public Comment like(@PathVariable Long id) {
         return commentService.like(id);
