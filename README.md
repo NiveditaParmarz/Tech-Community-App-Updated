@@ -1,6 +1,6 @@
 # 💻 Tech Community
 
-A full-stack Q&A platform where developers can ask questions, share answers, and help each other solve real-world problems — built with **Angular** on the frontend and **Spring Boot** on the backend.
+A full-stack Q&A platform where developers can ask questions, share answers, and help each other solve real-world problems, built with **Angular** on the frontend and **Spring Boot** on the backend.
 
 > Where developers help developers solve real-world problems.
 
