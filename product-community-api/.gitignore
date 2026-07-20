@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment-specific configs with real credentials ###
+src/main/resources/application-azure.properties
+src/main/resources/application-azure-test.properties
+src/main/resources/application-prod.properties
